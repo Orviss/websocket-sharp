@@ -119,7 +119,8 @@ namespace WebSocketSharp
     private Uri                            _uri;
     private const string                   _version = "13";
     private TimeSpan                       _waitTime;
-
+    private Dictionary<string, string> _headers = new Dictionary<string, string>();
+    
     #endregion
 
     #region Internal Fields
@@ -1947,6 +1948,11 @@ namespace WebSocketSharp
     private HttpResponse sendHandshakeRequest ()
     {
       var req = createHandshakeRequest ();
+      foreach (var header in _headers)
+      {
+        req.Headers[header.Key] = header.Value;
+      }
+      _headers = null; // _headers are not needed anymore so make them elligible for garbage collection 
       var res = sendHttpRequest (req, 90000);
       if (res.IsUnauthorized) {
         var chal = res.Headers["WWW-Authenticate"];
@@ -2427,6 +2433,20 @@ namespace WebSocketSharp
     #endregion
 
     #region Public Methods
+
+    public void AddRequestHeader(string key, string value)
+    {
+      if (string.IsNullOrEmpty(key))
+      {
+        throw new ArgumentException("Cannot add empty request header key");
+      }
+      if (value == null)
+      {
+        throw new ArgumentException("Cannot add null as request header value");
+      }
+
+      _headers[key] = value;
+    }
 
     /// <summary>
     /// Accepts the WebSocket handshake request.
