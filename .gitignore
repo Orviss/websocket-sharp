@@ -12,3 +12,7 @@ obj
 *.user
 *.userprefs
 UpgradeLog*.*
+
+## Ignore Unity files ##
+*.meta
+
