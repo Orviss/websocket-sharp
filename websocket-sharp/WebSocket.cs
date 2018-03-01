@@ -3310,8 +3310,14 @@ namespace WebSocketSharp
       Func<bool> connector = connect;
       connector.BeginInvoke (
         ar => {
-          if (connector.EndInvoke (ar))
-            open ();
+          if (connector.EndInvoke(ar))
+          {
+            open();
+          }
+          else
+          {
+            error("Could not open connection", null);
+          }
         },
         null
       );
